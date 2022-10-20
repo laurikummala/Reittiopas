@@ -1,0 +1,139 @@
+Servereillä leikittelyä
+
+
+- luodaan projekti komentoriviltä:
+npx create-react-app koeprojekti
+- vaihdetaan kirjastoa
+cd koeprojekti
+
+BACKEND
+=======
+LOCAL:
+- voi käynnistää:
+npx json-server --port=3001 --watch db.json  //luo db.json tiedoston, jos sitä ei ole siinä hakemistossa jossa tuon ajaa
+- selaimessa voi tarkistaa toimiiko:
+http://localhost:3001/posts  // jos on äsköisessä luotu se db.json
+http://localhost:3001/comments
+http://localhost:3001/profile
+- voi muuttaa db.json-tiedoston seuraavaksi
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "HTML is easy",
+      "date": "2022-1-17T17:30:31.098Z",
+      "important": false
+    },
+    {
+      "id": 2,
+      "content": "Browser can execute only JavaScript",
+      "date": "2022-1-17T18:39:34.091Z",
+      "important": true
+    },
+    {
+      "id": 3,
+      "content": "GET and POST are the most important methods of HTTP protocol",
+      "date": "2022-1-17T19:20:14.298Z",
+      "important": true
+    }
+  ]
+}
+- voi kokeilla selaimella:
+http://localhost:3001/notes/1  //antaa notesien ensimmäisen elementin, jonka id=1
+
+- voi myös tehdä näin:
+-- asennetaan JSON Server projektin sovelluskehityksen aikaiseksi riippuvuudeksi (projekti-hakemistossa)
+npm install json-server --save-dev
+-- lisätään package.json osaan scripts (pilkku edellisen rivin loppuun):
+    "server": "json-server -p3001 --watch db.json"
+-- nyt voi käynnistää serverin projektin hakemistosta:
+npm run server
+-- kun eka kerran tekee, niin luo taas sen db.json-tiedoston jos sitä ei ole siellä hakemistossa
+-- voi testata kuten edellä
+
+
+
+- jos backend tehdäänkin backend kansioon:
+-- tehdään src/backend- kansio ja mennään sinne
+-- npm init // tämä luo package.json-tiedoston
+vastaa:
+package name: backend
+description: backend for something
+entry point: server.js
+keywords: express
+author:heli
+license: ISC
+is this ok? (yes) y
+-- npm install express
+-- package.jsonin loppuun: pilkku toiseksi viimeisen kaarisulun jälkeen ja
+"proxy":"http://localhost:3001"  //tarvii tämän, jotta selaimessa näkyy tietokannan sisältö
+-- tehdään server.js-tiedosto:
+
+const express = require("express");
+let app = express();
+app.use(express.json());
+let port = process.env.PORT || 3001;
+//DATABASE
+let database = [0, 'kari','mari', 'lauri', 125];
+//tarvii tämän, jotta selaimessa näkyy tietokanta (http://localhost:3001/project)
+//en tiiä mistä silloin kutsutaan????
+app.get("/project",function(request,response) {
+	return response.status(200).json(database);
+});
+app.listen(port);
+console.log("Running in port",port);
+
+-- käynnistetään serveri (lopeta ja käynnistä serveri uudelleen terminaalissa joka server.js:n muokkauksen jälkeen!!)
+node server //näkyy selaimessa http://localhost:3001/project
+
+
+
+- jos käytetäänkin mongodbtä paikallisesti
+-- mongodb:n ja mongoshellin asennusta ei tarvi tehdä, jos ne on jo asennettu!!
+--- asenna mongodb community server ilman serveriä
+--- asenna mongoshell ja pura tiedostot
+-- luo juureen (C:\) kansio data ja sille kansio db, (jos et ole jo tehnyt)
+-- käynnistä klikkaamalla mongod:n bin-kansiossa (mulla:C:\Program Files\MongoDB\Server\6.0\bin)
+olevaa mongod.exe-sovellusta: tulee hirveästi mystistä tekstiä ja jää pyöriin taustalle
+- käynnistä shell klikkaamalla mongoshellin bin-kansiossa 
+(mulla: C:\Program Files\mongosh-1.5.4-win32-x64\mongosh-1.5.4-win32-x64\bin) olevaa mongosh.exe-sovellusta
+-- tietokannassa(database) voi olla monta collectionsia
+show dbs // näyttää kaikki serverillä olevat mongotietokannat
+use database // vaihtaa käytettävän tietokannan (nyt: use indexingdata)
+show collections // näyttää tietokannan collectionit
+--- lisätään contacts-collectionsiin yksi (jos contactsia ei ole, se luodaan automaattisesti)
+db.contacts.insertOne({"name":"Matti Meikalainen"})
+db.contacts.help() // tulostaa kaikki contacts-collectionin käytettävät komennot
+db.contacts.insertMany([{"name":"Maija Meikalainen"},{"name":"Kalle Meikalainen"},{"name":"Ville Tiihonen"}])
+--testataan lisäämistä (tämä vaan mielenkiinnon vuoksi...):
+--- tehdään sata tietuetta generatedata.com/generator:lla
+--- tehdään data/scripts-kansioon insertdata.js:
+const data = [] // tähän hakasulkeitten väliin se sadan taulukko
+tiedoston loppuun:
+var conn = new Mongo();
+var db = conn.getDB("insertdata")'; 
+db.contacts.insertMany(data); //lisää 100
+--- tai tehdään data/scripts-kansioon indexingdata.js:
+const data = [] // tähän hakasulkeitten väliin se sadan taulukko
+tiedoston loppuun:
+var conn = new Mongo();
+var db =conn.getDB("indexingdata");
+for(let i=0;i<5000;i++){ // lisää 5000x100, samoja kontakteja siis monta kertaa
+    db.contacts.insertMany(data)
+}
+--- mongoshellissä:
+load("c:/data/scripts/insertdata.js")  //tämä lisää 100 uutta kontaktia insertdata-tietokantaan, samoja
+load("c:/data/scripts/indexingdata.js")    //lisää siis 500000 kontaktia lisää indexingdata-tietokantaan
+--- db.contacts.find()  // tulostaa kaikki, it:llä lisää
+--- db.contacts.find().count() //laskee kaikki
+--- hävittää koko collectionin kysymättä mitään!!: db.contacts.drop()
+--queryt
+db.contacts.find({"age":{$gt:30}}).count() // laskee kaikki yli 30v. (gt='greater than' ja lt='less than')
+db.contacts.find({$and:[{"age":{$gte:40}},{"age":{$lte:60}}]}).count() // laskee kaikki yli 39 ja alle 61 vuotiaat
+-- muutokset
+db.contacts.updateMany({"age":{$gt:80}},{$set:{"city":"Pori"}}) // laittaa kaikkien jotka ovat yli 80 cityksi pori
+-- poistetaan insertdata-database: 
+use insertdata
+db.dropDatabase()  //tämä poistaa kyselemättä eli tarkkana missä db:ssä ollaan!!!
+
+
