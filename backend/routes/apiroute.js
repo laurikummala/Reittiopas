@@ -1,4 +1,6 @@
 const express = require("express");
+const reitti = require("../models/reitti");
+const user = require("../models/user");
 
 const router = express.Router();
 
