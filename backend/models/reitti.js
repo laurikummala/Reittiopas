@@ -5,7 +5,7 @@ let Schema = mongoose.Schema({
     nimi: String,
     pituus: Number,
     kuvaus: String,
-    user:{type:String,index:true}
+    // user:{type:String,index:true}
 });
 
 /*{
@@ -37,4 +37,4 @@ Schema.virtual("id").get(function() {
     return this._id;
 })*/
 
-module.exports = mongoose.model("Item",Schema);
+module.exports = mongoose.model("reitti",Schema);
