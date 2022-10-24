@@ -1,0 +1,69 @@
+// tähän asetetaan tietokannasta haetut reitit 
+const [reitit, asetaReitit] = useState()
+
+// valitaan dropboxista: 'kaikki', 'melontaReitit' tai 'vaellusReitit'
+const [näytettävätReitit, asetaNäytettävätReitit] = useState('kaikki') 
+
+// näytetäänkö 'reitit', 'reitti', 'lisääReitti', 'muokkaaReittiä', 'lisääKommentti'
+const [tila, asetaTila] = useState()
+
+// reittityypit 
+const melonta = false
+const vaellus = false
+
+// tietokantaan reittejä
+const data = [
+  {
+    "reitit": [
+      {
+        "id": 1,
+        "nimi": "Isokangas",
+        "pituus": 5,
+        "kuvaus": "Neulaspolku harjun laella. Hiekkatiet katkaisevat polun useasta kohtaa, joten polkupyöräilijöiden varottava",
+        "reittiKartalla": "Isokangas.img",
+        "lisääjä": "admin",
+        "lisäysAika": "12.10.2022 klo 12.35",
+        "kommentit":[
+          {
+            "id": 1,
+            "arvosana": 4,
+            "kommentti":"Hyvä reitti!",
+            "kommentoija": "Virpi",
+            "KommentointiAika": "12.10.2022 klo 15.13"
+          }
+        ],
+        "reittityypit":[
+          {"melonta": false},
+          {"vaellus": true}
+        ]
+      },
+      {
+        "id": 2,
+        "nimi": "Liminkajärven melontareitti",
+        "pituus": 27,
+        "kuvaus": "Melontareitti Liminkajokea vastavirtaan Liminkajärvelle ja takaisin. Lähtö Hannukrankan parkkipaikan vierestä.",
+        "reittiKartalla": "Liminkajärvenmelonta.img",
+        "lisääjä": "admin",
+        "lisäysAika": "12.9.2022 klo 16.55",
+        "kommentit":[
+          {
+            "id": 1,
+            "kommentti":"Oliko hankalaa päästä parkkipaikalta jokeen?",
+            "kommentoija":"jore",
+            "kommentointiAika": "12.9.2022 klo 18.59"
+          },
+          {
+            "id": 2,
+            "kommentti":"Ei helpointa, mutta ainoa järkevä paikka mistä pääsee?",
+            "kommentoija":"admin",
+            "KommentointiAika": "13.9.2022 klo 7.55"
+          }
+        ],
+        "reittityypit":[
+          {"melonta": true},
+          {"vaellus": false}
+        ]
+      }
+    ]
+  }
+]
