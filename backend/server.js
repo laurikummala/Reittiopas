@@ -1,7 +1,7 @@
 const express = require("express");
 const apiroute = require("./routes/apiroute");
 const mongoose = require("mongoose");
-
+const cors = require("cors")
 const Reitti = require("./models/reittiModel");
 
 
@@ -10,6 +10,7 @@ let app = express();
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: false}))
+app.use(cors())
 
 app.use('/api/reitit', require('./routes/apiroute'))
 

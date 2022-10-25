@@ -1,15 +1,17 @@
 const mongoose = require("mongoose");
 
-let reittiSchema = mongoose.Schema({
-    text: {
-      type: String,
-      required: [true, 'Lisää teksti']
-    }
-    // user:{type:String,index:true}
+const reittiSchema = mongoose.Schema({
+
+  nimi: String,
+  pituus: Number,
+  kuvaus: String,
+  user: String
+    
+    
 }, {
   timestamps: true,
 });
-
+// user:{type:String,index:true}
 /*{
         "id": 1,
         "nimi": "Isokangas",

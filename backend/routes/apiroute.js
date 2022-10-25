@@ -15,12 +15,18 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-	if(!req.body.text) {
+		
+	if(!req.body) {
 		res.status(400).json({message: 'Lisää teksti'})
 	}
 
 	const reitti = await Reitti.create({
-		text: req.body.text
+		nimi: req.body.nimi,
+		pituus: req.body.pituus,
+		kuvaus: req.body.kuvaus,
+		user: req.body.user
+
+
 	})
 
 	res.status(200).json(reitti)
