@@ -1,8 +1,10 @@
 const express = require("express");
 const apiroute = require("./routes/apiroute");
+const userRoute = require("./routes/userRoute")
 const mongoose = require("mongoose");
 const cors = require("cors")
 const Reitti = require("./models/reittiModel");
+
 
 
 let app = express();
@@ -13,7 +15,7 @@ app.use(express.urlencoded({extended: false}))
 app.use(cors())
 
 app.use('/api/reitit', require('./routes/apiroute'))
-
+app.use('/api/user', require('./routes/userRoute')) //lisätty userRoute 25.10.
 
 
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Reitti = require("../models/reittiModel");
-const user = require("../models/user");
+const user = require("../models/userModel");
 const reittiModel = require("../models/reittiModel");
 const asyncHandler = require("express-async-handler")
 
