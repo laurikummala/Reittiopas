@@ -18,11 +18,11 @@ app.use('/api/reitit', require('./routes/apiroute'))
 
 let port = process.env.PORT || 3001;
 
-// const mongo_user = process.env.MONGODB_USER;
-// const mongo_password = process.env.MONGODB_PASSWORD;
+const mongo_user = process.env.MONGODB_USERNAME;
+const mongo_password = process.env.MONGODB_PASSWORD;
 // const mongo_url = process.env.MONGODB_URL;
 
-mongoose.connect("mongodb+srv://kari:testaantestaan@opiframeprojekti.tvrncei.mongodb.net/?retryWrites=true&w=majority").then(
+mongoose.connect(`mongodb+srv://${mongo_user}:${mongo_password}@opiframeprojekti.tvrncei.mongodb.net/reittiopasApp?retryWrites=true&w=majority`).then(
 	() => console.log("Connected to mongodb"),
 	(err) => console.log("Failed to connect. Reason",err)
 );
