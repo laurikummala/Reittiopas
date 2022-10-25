@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 
-let Schema = mongoose.Schema({
-    id: Number,
-    nimi: String,
-    pituus: Number,
-    kuvaus: String,
+let reittiSchema = mongoose.Schema({
+    text: {
+      type: String,
+      required: [true, 'Lisää teksti']
+    }
     // user:{type:String,index:true}
+}, {
+  timestamps: true,
 });
 
 /*{
@@ -37,4 +39,4 @@ Schema.virtual("id").get(function() {
     return this._id;
 })*/
 
-module.exports = mongoose.model("reitti",Schema);
+module.exports = mongoose.model("Reitti",reittiSchema);

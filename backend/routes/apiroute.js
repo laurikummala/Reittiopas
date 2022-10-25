@@ -1,57 +1,58 @@
 const express = require("express");
-const reitti = require("../models/reitti");
-const user = require("../models/user");
-const reittiModel = require("../models/reitti");
-
 const router = express.Router();
+const Reitti = require("../models/reittiModel");
+const user = require("../models/user");
+const reittiModel = require("../models/reittiModel");
+const asyncHandler = require("express-async-handler")
 
-router.get("/", (req, res) => {
 
-    let query = {"user":req.session.user}
-	reittiModel.find(query,function(err,reitit) {
-		if(err) {
-			console.log("Failed to find items. Reason",err);
-			return res.status(500).json({message:"Internal server error"})
-		}
-		return res.status(200).json(reitit);
-	})
-});
 
-router.post("/", (req, res) => {
 
-    if(!req.body) {
-		return res.status(400).json({message:"Bad request"});
+router.get("/", async (req, res) => {
+	const reitti = await Reitti.find()
+	
+	res.status(200).json(reitti)
+})
+
+router.post("/", async (req, res) => {
+	if(!req.body.text) {
+		res.status(400).json({message: 'Lisää teksti'})
 	}
-	if(!req.body.type) {
-		return res.status(400).json({message:"Bad request"});
+
+	const reitti = await Reitti.create({
+		text: req.body.text
+	})
+
+	res.status(200).json(reitti)
+})
+
+router.put("/:id", async (req, res) => {
+	const reitti = await Reitti.findById(req.params.id)
+
+	if(!Reitti) {
+		res.status(400).json({message: 'Reitti ei löytynyt'})
 	}
-	let reitti = new reittiModel({
-		id:req.body.id,
-		nimi:req.body.nimi,
-		pituus:req.body.pituus,
-		kuvaus:req.session.kuvaus
+
+	const updatedReitti = await Reitti.findByIdAndUpdate(req.params.id, req.body, {
+		new: true,
 	})
-	reitti.save(function(err) {
-		if(err) {
-			console.log("Failed to create item. Reason",err);
-			return res.status(500).json({message:"Internal server error"})
-		}
-		return res.status(201).json({message:"Created"});
-	})
+
+	res.status(200).json(updatedReitti)
 })
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
+	const reitti = await Reitti.findById(req.params.id)
 
-    res.json("Poista reitti")
+	if(!Reitti) {
+		res.status(400).json({message: 'Reitti ei löytynyt'})
+	}
 
-    return res.status(200).json({ message: "Success" });
+	await reitti.remove()
+
+	res.status(200).json({id: req.params.id})
 })
 
-router.put("/:id", (req, res) => {
 
-    res.json("Muokkaa reitti")
 
-    return res.status(200).json({ message: "Success" });
-})
 
 module.exports = router;

@@ -1,16 +1,20 @@
 const express = require("express");
 const apiroute = require("./routes/apiroute");
 const mongoose = require("mongoose");
-const userModel = require("./models/user");
-const reittiModel = require("./models/reitti");
 
-
-
+const Reitti = require("./models/reittiModel");
 
 
 let app = express();
 
+//middleware
 app.use(express.json());
+app.use(express.urlencoded({extended: false}))
+
+app.use('/api/reitit', require('./routes/apiroute'))
+
+
+
 
 let port = process.env.PORT || 3001;
 
@@ -23,10 +27,10 @@ mongoose.connect("mongodb+srv://kari:testaantestaan@opiframeprojekti.tvrncei.mon
 	(err) => console.log("Failed to connect. Reason",err)
 );
 
-mongoose.set("toJSON",{virtuals:true});
+//mongoose.set("toJSON",{virtuals:true});
 
 
-app.use("/api",apiroute);
+//app.use("/api",apiroute);
 
 app.listen(port);
 
