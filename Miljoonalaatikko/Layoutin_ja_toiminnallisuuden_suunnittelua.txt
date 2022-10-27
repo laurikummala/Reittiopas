@@ -1,0 +1,90 @@
+reititSivu:
+===========
+teksti Reittiopas, jotain tekstiä , 
+register-button(-> rekisteröinti) ja login-button(-> login)/logout-button(-> logout)
+
+dropdownvalikko, josta valittavana: 
+kaikki reitit, melontareitit, vaellusreitit ja pyöräilyreitit
+
+teksti, josta ilmenee mikä valittu: 
+Reitit(alkuvalinta), Melontareitit, Vaellusreitit, Pyöräilyreitit
+
+reitit esitettynä reittiriveillä laatikossa, jota voi scrollailla:
+reittirivi: 
+reitin nimi (-> reittiSivu), kommenttien määrä, arvioiden ka, 
+muokkaa button(-> reitinMuokkaus) ja poista button(-> alert(varmistus))
+
+lisääReitti-button(-> lisääReitti)
+
+
+reittiSivu:
+===========
+teksti Reittiopas...
+
+tekstiä: reitin nimi, pituus, kuvaus, 
+reitti kartalla??
+
+// pitäskö tähän lisätä: muokkaaReittiä-Button(-> reitinMuokkaus)
+
+kommentit esitettynä laatikossa, jota voi scrollailla
+kommentti: 
+kommentoija, kommentointipvm, kommenttiteksti, 
+muokkaa-button (-> muokkaaKommenttia) ja poista-button(-> alert(varmistus)) 
+
+kirjoitaKommentti-laatikko:
+teksti: Kirjoita kommentti...
+
+arvostele: 1, 2, 3, 4, 5 (klikkaamalla numeroa)
+
+Tallenna-button(-> tallentaa kommentin ja arvostelun, jotka päivittyvät kommenttilaatikkoon)
+
+Peruuta-button(-> reititSivu)
+
+
+reitinMuokkaus:
+===============
+teksti Reittiopas...
+
+Reitin nimi, Pituus, Kuvaus, reitti kartalla??
+Tyyppi-valinta (melonta, pyöräily, vaellus) (valintaboxeja)
+
+Kommentit-button(-> näyttää reitin kommentit...???)
+Arvostelut-button(-> näyttää reitin saamat arvostelut...???)
+Tallenna-button(-> tallentaa muutetun reitin (varmistus), -> edelliselle sivulle???)
+Peruuta-button(->reittiSivu)
+Poista-button(-> alert(varmistus))
+
+
+lisääReitti:
+============
+teksti Reittiopas...
+
+Reitin nimi, Pituus, Kuvaus, reitti kartalla??
+Tyyppi-valinta (melonta, pyöräily, vaellus) (valintaboxeja????)
+
+Tallenna-button(-> tallentaa reitin (varmistus), ->reititSivu)
+
+
+muokkaaKommenttia:
+==================
+
+kirjoitaKommentti-laatikko:
+teksti: Kommenttiteksti
+
+arvostele: 1, 2, 3, 4, 5 (klikkaamalla numeroa)
+
+Tallenna-button(-> tallentaa kommentin ja arvostelun, jotka päivittyvät kommenttilaatikkoon)
+
+Peruuta-button(-> edellinen sivu)
+
+
+
+// seuraavat tehdään jos ehditään
+rekisteröinti:
+==============
+
+login:
+======
+
+logout:
+=======
