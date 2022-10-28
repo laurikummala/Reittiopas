@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Reitti = require("../models/reittiModel");
-const user = require("../models/user");
+const user = require("../models/userModel");
 const reittiModel = require("../models/reittiModel");
 const asyncHandler = require("express-async-handler")
 
@@ -44,6 +44,17 @@ router.put("/:id", async (req, res) => {
 	})
 
 	res.status(200).json(updatedReitti)
+})
+
+router.get("/:id", async (req, res) => {
+	const reitti = await Reitti.findById(req.params.id)
+
+	if(!Reitti) {
+		res.status(400).json({message: 'Reitti ei löytynyt'})
+	}
+
+	
+	res.status(200).json(reitti)
 })
 
 router.delete("/:id", async (req, res) => {
