@@ -44,6 +44,18 @@ router.put("/:id", async (req, res) => {
 	res.status(200).json(updatedUser)
 })
 
+router.get("/:id", async (req, res) => {
+	const user = await User.findById(req.params.id)
+
+	if(!User) {
+		res.status(400).json({message: 'Käyttäjää ei löytynyt'})
+	}
+
+	
+	res.status(200).json(user)
+})
+
+
 router.delete("/:id", async (req, res) => {
 	const user = await User.findById(req.params.id)
 
