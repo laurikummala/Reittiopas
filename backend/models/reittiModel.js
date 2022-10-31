@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
-const reittiSchema = mongoose.Schema({
+const reittiSchema = mongoose.Schema(
+  {
+    user: {                                 // Tämä osio on lisätty jolloin reitin tekijä tunnistetaan
+      type: mongoose.Schema.Types.ObjectId, // ObjectID
+      required: true,
+      ref: 'User',
+    },
 
-  nimi: String,
-  pituus: Number,
-  kuvaus: String,
-  user: String
+      nimi: String, // reitin nimi
+      pituus: Number, // reitin pituus
+      kuvaus: String, // reitin kuvaus
+      user: String // reitin luojan nimi
     
     
 }, {
