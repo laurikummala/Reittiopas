@@ -6,8 +6,8 @@ const API_URL = '/api/reitit/'
 const createReitti = async (reittiData, token) => {
   const config = {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   }
 
   const response = await axios.post(API_URL, reittiData, config)

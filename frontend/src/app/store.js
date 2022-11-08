@@ -7,7 +7,7 @@ export const store = configureStore({
     auth: authReducer,
     reitit: reittiReducer,
   },
-})
+});
 
 // import { configureStore } from "@reduxjs/toolkit";
 // import authReducer from '../features/auth/authSlice'

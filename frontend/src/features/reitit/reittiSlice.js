@@ -32,7 +32,7 @@ export const getReitit = createAsyncThunk('reitit/getAll', async (_,
     thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
-        return await reittiService.getReitit(token)    // Tässä oli virhe
+        return await reittiService.getReitit(token) 
     } catch (error) {
         const message =                             // sama error kuin authSlicessa ja yläpuolella
             (error.response &&
