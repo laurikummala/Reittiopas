@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ReittiForm from '../components/ReittiForm'
 import ReittiItem from '../components/ReittiItem'
-//import Spinner from '../components/Spinner'
+import Spinner from '../components/Spinner'
 import { getReitit, reset } from '../features/reitit/reittiSlice'
 
 function Dashboard() {
@@ -11,13 +11,12 @@ function Dashboard() {
   const dispatch = useDispatch()
 
   const { user } = useSelector((state) => state.auth)
-  const { reitit, isLoading, isError, message } = useSelector(
-    (state) => state.reitit
-  )
+  const { reitit, isLoading, isError, message } = useSelector((state) =>
+    state.reitit)
 
   useEffect(() => {
     if (isError) {
-      console.log(message)
+      console.log(message);
     }
 
     if (!user) {
@@ -31,22 +30,22 @@ function Dashboard() {
     }
   }, [user, navigate, isError, message, dispatch])
 
-  // if (isLoading) {
-  //   return <Spinner />
-  // }
+  if (isLoading) {
+    return <Spinner />
+  }
 
   return (
     <>
-      <section className='heading'>
+      <section className="heading">
         <h1>Welcome {user && user.name}</h1>
         <p>Reitit Dashboard</p>
       </section>
 
       <ReittiForm />
 
-      <section className='content'>
+      <section className="content">
         {reitit.length > 0 ? (
-          <div className='reitit'>
+          <div className="reitit">
             {reitit.map((reitti) => (
               <ReittiItem key={reitti._id} reitti={reitti} />
             ))}

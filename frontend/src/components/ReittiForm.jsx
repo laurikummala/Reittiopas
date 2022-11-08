@@ -10,7 +10,7 @@ function ReittiForm() {
   const onSubmit = (e) => {
     e.preventDefault()
 
-    dispatch(createGoal({ text }))
+    dispatch(createReitti({ text }))
     setText('')
   }
 
