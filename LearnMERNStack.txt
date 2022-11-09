@@ -1,0 +1,331 @@
+Karin suosittelema video (tai oikeastaan 4):
+EKA VIDEO:
+https://www.youtube.com/watch?v=-0exw-9YJBo&list=PLillGF-RfqbbQeVSccR9PGKHzPJSWqcsm&index=1
+Learn The MERN Stack - Express & MongoDB Rest API
+- teki backendin päätiedoston juureen ja ajoivat npm init -komennon tuossa juuressa toisin kuin Erno, 
+joka ajoi tuon backendissä... nyt ymmärrän miksi K oli tehnyt sen package.jsonin 
+semmoseksi
+- entry pointiksi server.js
+- keywordiksi ei mitään, Erno laitto express
+- lisenssiksi MIT, Erno SIC, mitähän merkitystä tällä lienee
+- teki juureen myös .gitignore tiedoston, johon:
+node_modules
+.env
+- edelleen juuressa asennetaan:
+npm i express dotenv mongoose colors
+npm i -D nodemon
+- package.jsoniin (juuressa olevaan)
+"scripts": {
+  "start": "node backend/server.js",
+  "server": "nodemon backend/server.js"
+}
+- juuresta käynnistyy nodemonin kanssa: 
+npm run server
+- kannattaa käyttää gittiä, joten juuressa:
+git init
+git add . (eli git add all)
+git commit -m "kommenttia kommenttia"
+- tekee .env-tiedoston juureen:
+NODE_ENV = development
+PORT = 5000
+- hakee portin: process.env.PORT
+- käytti Postmania kuten Insomniaa me
+- teki backendin alle routes-kansion ja sinne goalRoutes
+- server.jsään app.use('/api/goals', require('./routes/goalRoutes'))
+- goalRoutesiin (myös .post ja .delete):
+router.get('/', (req, res) => {
+  res.status(200)json({ message: 'Get goals'})
+})
+router.put('/:id', (req, res) => {
+  res.status(200)json({ message: `Update goal ${req.params.id}` })
+})
+- teki backend-kansioon-controllers-kansion ja goalController.js:
+// @desc    Get goals
+// @route   GET /api/goals
+// @access  Private
+const getGoals = (req, res) => {
+  res.status(200).json({ message:'Get goals' })
+}
+// @desc    Delete goal
+// @route   DELETE /api/goals/:id
+// @access  Private
+const deleteGoal = (req, res) => {
+  res.status(200).json({ message:'`Update goal ${req.params.id}` })
+}
+- myös setGoal ja updateGoal
+- tiedoston loppuun:
+module.exports = {
+  getGoals,
+  setGoal,
+  updateGoal,
+  deleteGoal,
+}
+- goalRoutes.js siistiytyy:
+const express = require('express')
+const router = express.Router()
+const {
+  getGoals,
+  setGoal,
+  updateGoal,
+  deleteGoal,
+} = require('../controllers/goalController')
+
+router.route('/').get(getGoals).post(setGoal)
+router.route('/:id').delete(deleteGoal).put(updateGoal)
+
+module.exports = router
+- lisätään vielä errorHandlaus:
+- kun tehdään POST, viedään jotain tietoa bodyssa 
+- insomniassa POST ja body: Form URL encoded ja teksti text: 'mun uusi tavoite'
+- katotaan meneekö bodyyn tuo teksti lisäämällä goalController.js:n setGoaliin:
+console.log(req.body)
+- tulostaa konsoliin undefined
+- lisätään server.js:
+const app = express
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+- tulostaa konsoliin 
+[Object: null prototype] { text: 'mun uusi tavoite' }
+- setGoaliin:
+if(!req.body.text){
+  console.log('ei ole tekstiä')
+  res.status(400).json({message: 'Please add a text field'
+  })
+  res.status(200).json({ message: 'Set goal' })
+}
+- tulostaa konsoliin: 
+{}
+ei ole tekstiä
+- palauttaa:
+{
+  "message": "Please add a text field"
+}
+- setGoal sittenkin:
+const setGoal = (req, res) => {
+  console.log(req.body)
+  if(!req.body.text){
+    console.log('ei ole tekstiä')
+    // res.status(400).json({message: 'Please add a text field'})
+    res.status(400)
+      throw new Error('Please add a text field')
+  }
+  res.status(200).json({ message: 'Set goal' })
+}
+- luodaan backendiin kansio: middleware ja sinne errorMiddleware.js
+const errorHandler = (err, req, res, next) => {
+  const statusCode = res.statusCode ? res.statusCode : 500
+  res.status(statusCode)
+  res.json({
+      message: err.message,
+      stack: process.env.NODE_ENV === 'production' ? null : err.stack
+    })
+}
+module.exports = {
+  errorHandler, 
+}
+- server.js sään lisää:
+const { errorHandler } = require('./middleware/errorMiddleware')
+ja
+app.use(errorHandler)
+- tulostaa konsoliin saman ku edellä
+- palauttaa:
+{
+  "message": "Please add a text field",
+  "stack": "Error: Please add a text field\n    at setGoal ...
+- jos laittaa .env-tiedostoon  NODE_ENV production ja käynnistetään serveri uudelleen
+uudelleen, niin palauttaa:
+{
+  "message": "Please add a text field",
+  "stack": null
+}
+- palautetaan .env-tiedostoon  NODE_ENV development ja käynnistetään serveri uudelleen
+
+- asennetaan asenc handler
+npm i express-async-handler
+- lisätään goalController.jssään:
+const asyncHandler = require('express-async-handler')
+ja jokaiseen routeriin asyncHandler(async ... ): 
+const getGoals = asyncHandler(async (req, res) => {
+...
+})
+- tehdään välillä commit
+git add .
+git commit -m "Goals controller an routes setup"
+
+- teki uuden mongoprojektin
+- mulla cluster0: username tester, password testintesting ja tietokannannimi 
+kannattaa laittaa / ja ?-merkkien väliin, muuten tuo test-tietokannan
+mongodb+srv://tester:<password>@cluster0.rzcki1w.mongodb.net/?retryWrites=true&w=majorityluster0:
+- laitetaan url .env-tiedostoon (usein käyttävät MONGO_URI:a):
+MONGO_URL = mongodb+srv://tester:testingtesting@cluster0.rzcki1w.mongodb.net/mernapp?retryWrites=true&w=majority
+- lisätään server.js:
+const colors = require('colors')
+const connectDB = require('./config/db')
+connectDB()
+- lisätään backend-kansioon kansio config ja sinne db.js:
+const mongoose = require('mongoose')
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URL)
+    console.log(`MongoDB connected: ${conn.connection.host}`.cyan.underline);
+  } catch (error) {
+    console.log(error);
+    process.exit(1)
+  }
+}
+module.exports = connectDB
+- cyan.underline tulevat colorsista
+- konsolissa lukee:
+Server started on port 6000
+MongoDB connected: ac-mao3pxp-shard-00-01.rzcki1w.mongodb.net
+
+- tehdään goal malli:
+- lisätään backendiin kansio models ja sinne goalModel.js:
+const mongoose = require('mongoose')
+const goalSchema = mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: [true, 'Please add the text value']
+    },
+  },
+  {
+    timestamps:true,
+  }
+)
+module.exports = mongoose.model('Goal', goalSchema)
+- tehtiin scheema resurssia varten
+- teksti vaaditaan ja lopussa message
+required: [true, 'Please add the text value']
+- automaattisesti generoituva aikaleima:
+timestamps:true
+- tämä moduli exporttaa Goal-nimisen mallin joka määritellään goalSchemassa
+- goalControlleriin lisätään:
+const asyncHandler = require('express-async-handler')
+const Goal = require('../models/goalModel')
+...
+const getGoals = asyncHandler(async (req, res) => {
+  const goals = await Goal.find()
+  res.status(200).json(goals)
+})
+- kokeillaan ...palauttaa tyhjän taulukon, koska mitään ei ole vielä luotu sinne
+- muokataan vielä goalControlleria:
+const setGoal = asyncHandler(async (req, res) => {
+  if(!req.body.text){
+    res.status(400)
+      throw new Error('Please add a text field')
+  }
+  const goal = await Goal.create({
+    text: req.body.text,
+  })
+  res.status(200).json(goal)
+})
+- kokeillaan ja tomiihan se
+- seuraavaksi update:
+const updateGoal = asyncHandler(async (req, res) => {
+  const goal = await Goal.findById(req.params.id)
+  if(!goal) {
+    res.status(400)
+    throw new Error('Goal not found')
+  }
+  const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.
+    body, {
+    new: true,
+  })
+  res.status(200).json(updatedGoal)
+})
+- seuraavaksi delete:
+const deleteGoal = asyncHandler(async (req, res) => {
+  const goal = await Goal.findById(req.params.id)
+  if(!goal) {
+    res.status(400)
+    throw new Error('Goal not found')
+  }
+  await goal.remove()
+  res.status(200).json({ id: req.params.id })
+})
+- ja toimii
+
+
+
+TOKA VIDEO:
+==========
+youtube.com/watch?v=enopDSs3DRw&list=PLillGF-RfqbbQeVSccR9PGKHzPJSWqcsm&index=2
+Learn The MERN Stack - JWT Authenticationv
+- teki userModelin
+...
+- asenna bcryptjs salasanaa varten
+npm i bcryptjs
+npm i jsonwebtoken
+
+en tehnyt muistiinpanoja aikaa säästääkseni... ehkä virhe
+
+
+KOLMAS VIDEO:
+=============
+- tehdään frontend:
+npx create-react-app frontend --template redux
+- lisätään juuren package.jsoniin:
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend"
+- käynnistetään frontend juuresta:
+npm run client
+- frontend starttaa ja tulee hieman erinäkönen aloitus, kuin 
+yleensä, johtuen tuosta reduxin lisäämisestä
+- siivottiin aika paljon pois
+- tehtiin src/pages kansioon: Dashboard.jsx, Login.jsx ja Register,jsx
+- asennettiin frontend kansiossa
+npm i react-router-dom
+npm i react-icons
+- muokattiin App.js
+- tehtiin src/components kansioon Header.jsx
+- muokattiin fileita ja saatiin frontend UI toimimaan
+- tallensin githubiin
+-asennetaan juureen
+npm i -D concurrently
+- laitetaan package.jsoniin:
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+- käynnistetään juuresta saman aikaisesti backend ja frontend
+npm run dev
+- ja sehän toimii!!! paitsi, ettei heti päässyt mongoon ja sitten tilttas
+- puolen tunnin kohilla mentiin reduxiin: kuuntelehan uudelleen...
+- asennettiin axios frontendissä:
+npm i axios react-toastify
+- lisättiin frontendin package.jsoniin (tuo viim rivi):
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "proxy": "http://localhost:5000",
+- rekisteröinti toimi kerran, mutta sitten ei enää tule rekisteröintisivu näkyviin
+- kävin syömässä  ja sitten se toimi taas kertaalleen ???
+- tässä videossa siis tehtiin rekisteröinti, login ja logout toimimaan eri käyttäjille.
+- en oo varsinaisesti testannu toimiiko... mutta kaverin koodihan löytyy githubista
+
+ 
+NELJÄS VIDEO:
+=============
+- nyt pitäs saad sivulle jotain sisältöäkin
+- kaveri tekee komponenttien alle jsx-tiedostoja, koska tykkää tehdä niin... 
+voi tehdä myös js-tiedostoja
+-teoriassa toimii, mutta ei sitten kuitenkaan, eli laittaa tavoitteita tietokantaan, 
+muttei hae niitä, paitsi ne juuri asetetut, taisin vahingossa löytää virheen: 
+luki post ku piti lukea get
+- nythän se toimii taas, paitsi ettei poista sittenkään...
+
+
+
+
+
+
+
+
+
+
+
+
