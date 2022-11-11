@@ -1,94 +1,125 @@
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { reset } from '../features/auth/authSlice'
 import { luoReitti } from '../features/reitit/reittiSlice'
+import Spinner from '../components/Spinner'
 
 function LisaaReitti() {
-  const [text, setText] = useState('')
+  const [formData, setFormData] = useState({
+    nimi: '',
+    pituus: '',
+    kuvaus: '',
+  })
 
+  const { nimi, pituus, kuvaus } = formData
+
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const onSubmit = e => {
-    e.preventDefault()
+  const { user, isLoading, isError, isSuccess, message} = useSelector
+  (
+    (state) => state.auth
+  )
 
-    dispatch(luoReitti({text}))
-    setText('Kirjoita teksti')
+  useEffect(() => {
+    if(isError) {
+      toast.error(message)
+    }
+
+    if(isSuccess || user){
+      navigate('/')
+    }
+
+    dispatch(reset())
+  }, [user, isError, isSuccess, message, navigate, dispatch])
+
+
+  const onChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const reittiData = {
+      nimi,
+      pituus,
+      kuvaus
+    }
+    dispatch(luoReitti(reittiData))    
+  }
+
+  if(isLoading) {
+    return <Spinner />
   }
 
   return (
-    <section className='form'>
-      <form onSubmit={onSubmit}>
-        <div className='form-group'>
-          <label htmlFor="text">Kirjoita reitin nimi:</label>
-          <input 
-            type='text' 
-            name='text' 
-            id= 'text'
-            value= {text}
-            onChange={(e) => setText(e.target.value)}
-          />
-        </div>
-        <div className='form-group'>
-          <button className='btn-block'
-            type='submit'>
-              Lisää reitti
-          </button>
-        </div>
-      </form>
-      <section className="form">
-        <form onSubmit={onSubmit}>
-          <div className="form-group">
-            <input 
-              type='text' 
-              className='form-control' 
-              id='name' 
-              name='name' 
-              value={name} 
-              placeholder='Anna nimesi' 
-              onChange={onChange} 
-            /> 
-          </div>
-          <div className="form-group">
-            <input 
-              type='email' 
-              className='form-control' 
-              id='email' 
-              name='email' 
-              value={email} 
-              placeholder='Anna sähköpostiosoitteesi' 
-              onChange={onChange} 
-            /> 
-          </div>
-          <div className="form-group">
-            <input 
-              type='password' 
-              className='form-control' 
-              id='password' 
-              name='password' 
-              value={password} 
-              placeholder='Anna salasana' 
-              onChange={onChange} 
-            /> 
-          </div>
-          <div className="form-group">
-            <input 
-              type='password2' 
-              className='form-control' 
-              id='password2' 
-              name='password2' 
-              value={password2} 
-              placeholder='Toista salasana' 
-              onChange={onChange} 
-            />  
-          </div>
-          <div className="form-group">
-            <button 
-              type='submit' 
-              className='btn btn-block'>
-                Lähetä
-            </button>  
-          </div>
+    <>
+      <section className="heading">
+        <p>Lisää reitti</p>
+      </section>
+      <fieldset>
+        <br></br>
+        <section className="form">
+          <form onSubmit={onSubmit}>
+            <div className="form-group">
+              <input 
+                type='text' 
+                className='form-control' 
+                id='nimi' 
+                name='nimi' 
+                value={nimi} 
+                placeholder='Anna reitille nimi:' 
+                onChange={onChange} 
+              /> 
+            </div>
+            <div className="form-group">
+              <input 
+                type='number' 
+                className='form-control' 
+                id='pituus' 
+                name='pituus' 
+                value={pituus} 
+                placeholder='Anna reitin pituus kilometreinä:' 
+                onChange={onChange} 
+              /> 
+            </div>
+            <div className="form-group">
+              <input 
+                type='text' 
+                className='form-control' 
+                id='kuvaus' 
+                name='kuvaus' 
+                value={kuvaus} 
+                placeholder='Kuvaa reittiä:' 
+                onChange={onChange} 
+              /> 
+            </div>
+            <div className="form-group">
+              <button 
+                type='submit' 
+                className='btn btn-block'>
+                  Lisää reitti
+              </button>  
+            </div>
+          </form>
+        </section>
+        <p>Valitse mihin toimintaan reitti soveltuu:</p>
+        <form>
+          <input type="checkbox" id="melonta" name="melonta" value="melonta"/>
+          <label htmlFor="melonta"> melontaan</label><br></br>
+          <input type="checkbox" id="pyoraily" name="pyoraily" value="pyoraily"></input>
+          <label htmlFor="pyoraily"> pyöräilyyn</label><br></br>
+          <input type="checkbox" id="vaellus" name="vaellus" value="vaellus"></input>
+          <label htmlFor="vaellus"> vaellukseen</label><br></br><br></br>
         </form>
-    </section>
+
+      </fieldset>
+    </>
   )
 }
 

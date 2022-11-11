@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler')
-
 const Reitti = require('../models/reittiModel')
 const User = require('../models/userModel')
 
@@ -66,7 +65,7 @@ const paivitaReitti = asyncHandler(async (req, res) => {
   }
 
   // make sure the logged in user matches the reitti user
-  if(goal.user.toString() !== req.user.id){
+  if(reitti.user.toString() !== req.user.id){
     res.status(401)
     throw new Error('Käyttäjällä ei ole valtuuksia')   
   }

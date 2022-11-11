@@ -47,12 +47,12 @@ const Comment = ({
                     <div className="comment-author">{comment.username}</div>
                     <div>{createdAt}</div>
                 </div>
-                {!isEditing && <div className="comment-text">{comment.body}</div>}
+                {!isEditing && <div className="comment-text">{comment.teksti}</div>}
                 {isEditing && (
                     <CommentForm
                         submitLabel="Päivitä kommentti"
                         hasCancelButton
-                        initialText={comment.body}
+                        initialText={comment.teksti}
                         handleSubmit={(text) => updateComment(text, comment.id)}
                         handleCancel={() => {
                             setActiveComment(null);

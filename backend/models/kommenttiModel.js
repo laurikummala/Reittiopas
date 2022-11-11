@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 
-const goalSchema = mongoose.Schema(
+const kommenttiSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User'
     },
-    text: {
+    teksti: {
       type: String,
-      required: [true, 'Please add the text value']
+      required: [true, 'Lisää kommentti']
     },
   },
   {
@@ -17,4 +17,4 @@ const goalSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('Goal', goalSchema)
+module.exports = mongoose.model('Kommentti', kommenttiSchema)

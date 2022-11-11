@@ -27,7 +27,7 @@ function Header() {
         <Link to='/'>Reitit</Link>
       </div>
       <form onChange={onChange}>
-        <label for="cars">Valitse näytettävät reitit:</label>
+        <label htmlFor="cars">Valitse näytettävät reitit:</label>
         <select id="näytettävät" name="näytettävät">
           <option value="kaikki">Kaikki reitit</option>
           <option value="melonta">Melontareitit</option>
@@ -55,7 +55,6 @@ function Header() {
             </li>
           </>
         )}
-
       </ul>
     </header>
   )

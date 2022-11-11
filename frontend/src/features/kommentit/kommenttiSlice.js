@@ -1,19 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import goalService from "./goalService";
+import kommenttiService from "./kommenttiService"
 
 const initialState = {
-  goals: [],
+  kommentit: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
-  isError: '',
+  message: '',
 }
 
-// Create new goal
-export const createGoal = createAsyncThunk('goals/create', async (goalData, thunkAPI) => {
+// Luo uusi kommentti
+export const luoKommentti = createAsyncThunk('kommentit/luo', async (kommenttiData, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user.token
-    return await goalService.createGoal(goalData, token)
+    return await kommenttiService.luoKommentti(kommenttiData, token)
   } catch (error) {
     const message = 
       (error.response && 
@@ -25,11 +25,11 @@ export const createGoal = createAsyncThunk('goals/create', async (goalData, thun
   }
 })
 
-// Get user goals
-export const getGoals = createAsyncThunk('goals/getAll', async (_, thunkAPI) =>  {
+// Hae käyttäjän kommentit
+export const haeKommentit = createAsyncThunk('kommentit/haeKaikki', async (_, thunkAPI) =>  {
   try {
     const token = thunkAPI.getState().auth.user.token
-    return await goalService.getGoals(token)
+    return await kommenttiService.haeKommentit(token)
   } catch (error) {
     const message = 
       (error.response && 
@@ -41,11 +41,11 @@ export const getGoals = createAsyncThunk('goals/getAll', async (_, thunkAPI) => 
   }
 })
 
-// Delete user goal
-export const deleteGoal = createAsyncThunk('goals/delete', async (id, thunkAPI) => {
+// Poista käyttäjän kommentti
+export const poistaKommentti = createAsyncThunk('kommentit/poista', async (id, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user.token
-    return await goalService.deleteGoal(id, token)
+    return await kommenttiService.poistaKommentti(id, token)
   } catch (error) {
     const message = 
       (error.response && 
@@ -57,49 +57,49 @@ export const deleteGoal = createAsyncThunk('goals/delete', async (id, thunkAPI) 
   }
 })
 
-export const goalSlice = createSlice({
-  name: 'goal',
+export const kommenttiSlice = createSlice({
+  name: 'kommentti',
   initialState,
   reducers: {
     reset: (state) => initialState
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createGoal.pending, (state) => {
+      .addCase(luoKommentti.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(createGoal.fulfilled, (state, action) => {
+      .addCase(luoKommentti.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.goals.push(action.payload) 
+        state.kommentit.push(action.payload) 
       })
-      .addCase(createGoal.rejected, (state, action) => {
+      .addCase(luoKommentti.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
       })
-      .addCase(getGoals.pending, (state) => {
+      .addCase(haeKommentit.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(getGoals.fulfilled, (state, action) => {
+      .addCase(haeKommentit.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.goals = action.payload 
+        state.kommentit = action.payload 
       })
-      .addCase(getGoals.rejected, (state, action) => {
+      .addCase(haeKommentit.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
       })
-      .addCase(deleteGoal.pending, (state) => {
+      .addCase(poistaKommentti.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(deleteGoal.fulfilled, (state, action) => {
+      .addCase(poistaKommentti.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.goals = state.goals.filter((goal) => goal._id !== action.payload.id) 
+        state.kommentit = state.reitit.filter((kommentti) => kommentti._id !== action.payload.id) 
       })
-      .addCase(deleteGoal.rejected, (state, action) => {
+      .addCase(poistaKommentti.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
@@ -107,5 +107,5 @@ export const goalSlice = createSlice({
   }
 })
 
-export const {reset} = goalSlice.actions
-export default goalSlice.reducer
+export const {reset} = kommenttiSlice.actions
+export default kommenttiSlice.reducer

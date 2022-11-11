@@ -32,7 +32,7 @@ const CommentForm = ({
             </button>
             {hasCancelButton && (
                 <button
-                    type="button"
+                    type="submit" // alkuperäisessä "button"
                     className="comment-form-button comment-form-cancel-button"
                     onClick={handleCancel}>
                     Cancel

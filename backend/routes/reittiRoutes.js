@@ -9,7 +9,8 @@ const {
 
 const {protect} = require('../middleware/authMiddleware')
 
-router.route('/').get(protect, haeReitit).post(protect, luoReitti)
+router.route('/').get(protect, haeReitit)
+router.route('/lisaareitti').post(protect, luoReitti)
 router.route('/:id').put(protect, paivitaReitti).delete(protect, poistaReitti)
 
 
