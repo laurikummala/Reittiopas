@@ -44,7 +44,7 @@ const Comments = ({ currentUserId }) => {
         updateCommentApi(text, commentId).then(() => {
             const updateBackendComments = backendComments.map((backendComment) => {
                 if (backendComment.id === commentId) {
-                    return { ...backendComment, body: text };
+                    return { ...backendComment, teksti: text };
                 }
                 return backendComment;
             });
