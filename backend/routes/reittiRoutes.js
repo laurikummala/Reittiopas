@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const {
-  haeReitit, 
+  haeReitit,
+  haeReitti,
   luoReitti, 
   paivitaReitti, 
   poistaReitti,
@@ -9,9 +10,8 @@ const {
 
 const {protect} = require('../middleware/authMiddleware')
 
-router.route('/').get(protect, haeReitit)
-router.route('/lisaareitti').post(protect, luoReitti)
-router.route('/:id').put(protect, paivitaReitti).delete(protect, poistaReitti)
+router.route('/').get(protect, haeReitit).post(protect, luoReitti)
+router.route('/:id').get(protect, haeReitti).put(protect, paivitaReitti).delete(protect, poistaReitti)
 
 
 module.exports = router

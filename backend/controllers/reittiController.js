@@ -2,22 +2,38 @@ const asyncHandler = require('express-async-handler')
 const Reitti = require('../models/reittiModel')
 const User = require('../models/userModel')
 
+
 // @desc    Hae reitit
 // @route   GET /api/reitit
 // @access  Private
 const haeReitit = asyncHandler(async (req, res) => {
-  const reitit = await Reitti.find()  // hakee kaikki reitit
+  const reitit = await Reitti.find()  // hakee kaikki reitit !!!
   // const reitit = await Reitti.find({ user: req.user.id })  // jos tarvii hakea tietyn käyttäjän reitit
-
+  
   res.status(200).json(reitit)
 })
+
+
+// @desc    Hae reitti
+// @route   GET /api/reitit
+// @access  Private
+const haeReitti = asyncHandler(async (req, res) => {
+  const reitti = await Reitti.findById(req.params.id)
+  
+  if(!reitti) {
+    res.status(400)
+    throw new Error('Reittiä ei löytynyt')
+  }
+
+  res.status(200).json(reitti)
+})
+
 
 // @desc    Luo reitti
 // @route   POST /api/reitit
 // @access  Private
 const luoReitti = asyncHandler(async (req, res) => {
   console.log(req.body)
-  // tää pitää miettiä uusiksi...
   if(!req.body.nimi){
     console.log('ei ole annettu nimeä')
     // res.status(400).json({message: 'Please add a nimi field'})
@@ -37,15 +53,16 @@ const luoReitti = asyncHandler(async (req, res) => {
   }
 
   const reitti = await Reitti.create({
-    // nää uusiksi!!!!
     nimi: req.body.nimi,
     pituus: req.body.pituus,
     kuvaus: req.body.kuvaus,
     user: req.user.id,
+    reittityypit: {melonta: req.body.melonta, pyoraily: req.body.pyoraily, vaellus: req.body.vaellus},
   })
 
   res.status(200).json(reitti)
 })
+
 
 // @desc    Päivitä reitti
 // @route   PUT /api/reitit
@@ -78,6 +95,7 @@ const paivitaReitti = asyncHandler(async (req, res) => {
   res.status(200).json(paivitettyReitti)
 })
 
+
 // @desc    Poista reitti
 // @route   DELETE /api/reitit
 // @access  Private
@@ -108,6 +126,7 @@ const poistaReitti = asyncHandler(async (req, res) => {
 
 module.exports = {
   haeReitit,
+  haeReitti,
   luoReitti,
   paivitaReitti,
   poistaReitti

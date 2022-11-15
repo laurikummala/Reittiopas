@@ -1,3 +1,6 @@
+// kokeillaan lisätä mukaan reittityypit ja sen jälkeen kommentit, arvostelukin puuttuu, 
+// ja kuva reitistä
+
 const mongoose = require('mongoose')
 
 const reittiSchema = mongoose.Schema(
@@ -19,6 +22,32 @@ const reittiSchema = mongoose.Schema(
       type: String,
       required: [true, 'Lisää reitin kuvaus']
     },
+    reittityypit:[{
+      melonta: {
+        type: Boolean,
+        default: false
+      },
+      pyoraily: {
+        type: Boolean,
+        default: false
+      },
+      vaellus: {
+        type: Boolean,
+        default: false
+      },
+    }],
+
+    // tätä kommenttiosiota pitää vielä miettiä miten tehdään??
+    // kommentit:[{
+    //   kommentti: {
+    //     type: String,
+    //     id: Number,
+    //     arvosana: Number,
+    //     kommentoija: String,
+    //     kommentoijanID: Number,
+    //     createdAt: new Date().toISOString(),
+    //   }
+    // }]
   },
   {
     timestamps:true,
@@ -27,6 +56,36 @@ const reittiSchema = mongoose.Schema(
 
 module.exports = mongoose.model('Reitti', reittiSchema)
 
+
+// // toimiva skeema ilman reittityyppejä ja kommentteja
+// const mongoose = require('mongoose')
+
+// const reittiSchema = mongoose.Schema(
+//   {
+//     user: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       required: true,
+//       ref: 'User'
+//     },
+//     nimi: {
+//       type: String,
+//       required: [true, 'Lisää reitin nimi']
+//     },
+//     pituus: {
+//       type: Number,
+//       required: [true, 'Lisää reitin pituus kilometreinä']
+//     },
+//     kuvaus: {
+//       type: String,
+//       required: [true, 'Lisää reitin kuvaus']
+//     },
+//   },
+//   {
+//     timestamps:true,
+//   }
+// )
+
+// module.exports = mongoose.model('Reitti', reittiSchema)
 
 
 /*{

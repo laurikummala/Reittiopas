@@ -3,11 +3,14 @@ import reittiService from "./reittiService";
 
 const initialState = {
   reitit: [],
+  naytettavat: 'kaikki',
+  reittiId: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: '',
 }
+
 
 // Luo uusi reitti
 export const luoReitti = createAsyncThunk('reitit/luo', async (reittiData, thunkAPI) => {
@@ -25,7 +28,8 @@ export const luoReitti = createAsyncThunk('reitit/luo', async (reittiData, thunk
   }
 })
 
-// Hae käyttäjän reitit
+
+// Hae kaikki reitit
 export const haeReitit = createAsyncThunk('reitit/haeKaikki', async (_, thunkAPI) =>  {
   try {
     const token = thunkAPI.getState().auth.user.token
@@ -40,6 +44,23 @@ export const haeReitit = createAsyncThunk('reitit/haeKaikki', async (_, thunkAPI
     return thunkAPI.rejectWithValue(message)  
   }
 })
+
+
+export const haeReitti = createAsyncThunk('reitit/haeReitti', async (id, thunkAPI) =>  {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await reittiService.haeReitti(id,token)
+  } catch (error) {
+    const message = 
+      (error.response && 
+        error.response.data && 
+        error.response.data.message) || 
+      error.message || 
+      error.toString()
+    return thunkAPI.rejectWithValue(message)  
+  }
+})
+
 
 // Poista käyttäjän reitti
 export const poistaReitti = createAsyncThunk('reitit/poista', async (id, thunkAPI) => {
@@ -57,11 +78,18 @@ export const poistaReitti = createAsyncThunk('reitit/poista', async (id, thunkAP
   }
 })
 
+
 export const reittiSlice = createSlice({
   name: 'reitti',
   initialState,
   reducers: {
-    reset: (state) => initialState
+    reset: (state) => initialState,
+    setNaytettavat: (state, action) => {
+      state.naytettavat = action.payload
+    },
+    setReittiId: (state, action) => {
+      state.reittiId = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -91,6 +119,19 @@ export const reittiSlice = createSlice({
         state.isError = true
         state.message = action.payload
       })
+      .addCase(haeReitti.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(haeReitti.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.reitit = action.payload 
+      })
+      .addCase(haeReitti.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
       .addCase(poistaReitti.pending, (state) => {
         state.isLoading = true
       })
@@ -107,5 +148,5 @@ export const reittiSlice = createSlice({
   }
 })
 
-export const {reset} = reittiSlice.actions
+export const {reset, setNaytettavat, setReittiId} = reittiSlice.actions
 export default reittiSlice.reducer

@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const API_URL = '/api/reitit/'
 
+
 // Luo uusi reitti
 const luoReitti = async (reittiData, token) => {
   const config = {
@@ -15,6 +16,7 @@ const luoReitti = async (reittiData, token) => {
   return response.data
 }
 
+
 // Hae käyttäjän reitit
 const haeReitit = async (token) => {
   const config = {
@@ -27,6 +29,21 @@ const haeReitit = async (token) => {
 
   return response.data
 }
+
+
+// Hae käyttäjän tietty reitti id-numerolla
+const haeReitti = async (reittiId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.get(API_URL + reittiId, config)
+
+  return response.data
+}
+
 
 // Poista käyttäjän reitti
 const poistaReitti = async (reittiId, token) => {
@@ -45,6 +62,7 @@ const poistaReitti = async (reittiId, token) => {
 const reittiService = {
   luoReitti,
   haeReitit,
+  haeReitti,
   poistaReitti,
 }
 
