@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import ReititForm from '../components/ReititForm'
+
 import ReittiRivi from '../components/ReittiRivi'
 import Spinner from '../components/Spinner'
 import { haeReitit, poistaReitti, setReittiId, reset } from '../features/reitit/reittiSlice'
