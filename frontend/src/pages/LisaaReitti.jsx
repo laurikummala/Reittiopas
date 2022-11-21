@@ -62,6 +62,13 @@ function LisaaReitti() {
     }))
   }
 
+  const onChangeChecked = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.checked,
+    }))
+  }
+
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -128,11 +135,11 @@ function LisaaReitti() {
             </div>
             <p>Valitse mihin toimintaan reitti soveltuu:</p>
             <div>
-              <input type="checkbox" id="melonta" name="melonta" value={melonta}></input>
+              <input type="checkbox" id="melonta" name="melonta" value={melonta} onChange={onChangeChecked}></input>
               <label htmlFor="melonta"> melontaan</label><br></br>
-              <input type="checkbox" id="pyoraily" name="pyoraily" value={pyoraily}></input>
+              <input type="checkbox" id="pyoraily" name="pyoraily" value={pyoraily} onChange={onChangeChecked}></input>
               <label htmlFor="pyoraily"> pyöräilyyn</label><br></br>
-              <input type="checkbox" id="vaellus" name="vaellus" value={vaellus}></input>
+              <input type="checkbox" id="vaellus" name="vaellus" value={vaellus} onChange={onChangeChecked}></input>
               <label htmlFor="vaellus"> vaellukseen</label><br></br><br></br>
             </div>
             <div className="form-group">

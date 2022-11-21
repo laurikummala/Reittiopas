@@ -51,6 +51,24 @@ function Reitit() {
     }
   }
 
+  function reittifilter(reitti) {
+    //console.log("reittifilterkutsuttu")   
+    if (naytettavat === 'kaikki') {
+      return reitti;
+    }
+    if (reitti.reittityypit.length > 0) {
+      if (reitti.reittityypit[0].melonta === true && naytettavat === 'melonta') {
+        return reitti;
+      }
+      if (reitti.reittityypit[0].vaellus === true && naytettavat === 'vaellus') {
+        return reitti;
+      }
+      if (reitti.reittityypit[0].pyoraily === true && naytettavat === 'pyoraily') {
+        return reitti;
+      }
+    }
+
+  }
 
   return (
     <>
@@ -73,7 +91,9 @@ function Reitit() {
       <div>
         {reitit.length > 0 ? (
           <ul>
-            {reitit.map(reitti =>
+            {reitit
+            .filter(reittifilter)
+            .map(reitti =>
               <li key={reitti._id}>
                 <Link to={`/reitit/${reitti._id}`} >{reitti.nimi}, _id:{reitti._id}, {reitti.pituus} km, ***</Link>
                 {poistaReittiButton({reitti})}

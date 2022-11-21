@@ -1,80 +1,54 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import ReittiRivi from '../components/ReittiRivi'
-import Spinner from '../components/Spinner'
-import { haeReitti, reset } from '../features/reitit/reittiSlice'
+import { haeReitit, reset } from '../features/reitit/reittiSlice'
+import Spinner  from '../components/Spinner'
 
-// function Reitti({reitit}) {
+
 function Reitti() {
 
-  const id = useParams().id
+  const [arvo, setArvo] = useState({luku: null})
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   
-
-  // const navigate = useNavigate()
-  // const dispatch = useDispatch()
-
   const {user} = useSelector((state) => state.auth)
-  const { reitit, reittiId, isLoading, isError, message} = useSelector((state) => state.reitit)
+  const { reitit, isLoading, isError, message} = useSelector((state) => state.reitit)
 
-  console.log(reittiId)
+  const id = useParams().id
 
-  // tässänäin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  const reitti = reitit.find(n => n.id === Number(id))
-  
-  console.log(reitti)
+  useEffect(() => {
+    if(isError) {
+       console.log(message);
+    }
+
+  dispatch(haeReitit())
+  console.log(reitit)
   console.log(id)
 
-  // useEffect(() => {
-  //   if(isError) {
-  //     console.log(message);
-  //   }
+  const kokeilu = reitit.find(n => n._id === id)
+  console.log(kokeilu)
+  console.log(kokeilu.nimi)
+  setArvo({...arvo, luku: kokeilu})
+  console.log(arvo.luku.nimi)
 
-  //   if(!user) {
-  //     navigate('/login')
-  //   }
+  return () => {
+    dispatch(reset())
+  }
 
-  //   dispatch(haeReitti(reittiId))
+  }, [user, navigate])
 
-  //   return () => {
-  //     dispatch(reset())
-
-  //   }
-
-  // }, [user, navigate])
-
-  // if(isLoading) {
-  //   return <Spinner />
-  // }
+  if(isLoading) {
+    return <Spinner />
+  }
 
   return (
-    <>      
-      <section>
-      <h3>Tähän pitäs tulla reitin tiedot</h3>
-      {/* <h3>{reitti._id}</h3> */}
-      <div>
-        {/* <h2>{reitti.nimi}</h2>
-        <div>{reitti.kuvaus}</div> */}
-        {/* <div><strong>{reitti.pituus ? 'tärkeä' : ''}</strong></div> */}
-      </div>
-      {/* <button onClick={() => navigate("/lisaaReitti")}>Lisää reitti</button> */}
-        {/* <h2>Tervetuloa sivuillemme {user && user.name}</h2>
-        <p>Valittu reitti</p> */}
-      </section>
-      {/* <ReititForm/> */}
-      {/* <section className="content">
-        {reitit.length > 0 ? (
-          <div className="reitti">
-            {reitit.map((reitti) => (
-              <ReittiRivi key={reitti._id} reitti ={reitti} user = {user} />
-            ))}
-          </div>
-        ) : (
-          <h3>Ei ole reittiä</h3>
-        )}
-      </section> */}
-    </>
-  )
+    <div>
+      <h3>{arvo.luku.nimi}</h3>
+      <p>Kuvaus: {arvo.luku.kuvaus}</p>
+      <p>Pituus: {arvo.luku.pituus} km</p>
+    </div>
+    )
 }
 
 export default Reitti
