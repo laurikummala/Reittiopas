@@ -1,10 +1,18 @@
+// 22.11.22 HK
+// Vaihdoin reittiId:n reittiOlioksi initialStatessa 
+// vaihdoin setReittiId:n setReittiOlioksi ja
+// muutin .addCase(haeReitti.fulfi... :n 
+// rivin: state.reitit = action.payload 
+// riviksi: state.reittiOlio = action.payload 
+// 
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import reittiService from "./reittiService";
 
 const initialState = {
   reitit: [],
   naytettavat: 'kaikki',
-  reittiId: null,
+  reittiOlio: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -87,8 +95,8 @@ export const reittiSlice = createSlice({
     setNaytettavat: (state, action) => {
       state.naytettavat = action.payload
     },
-    setReittiId: (state, action) => {
-      state.reittiId = action.payload
+    setReittiOlio: (state, action) => {
+      state.reittiOlio = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -125,7 +133,7 @@ export const reittiSlice = createSlice({
       .addCase(haeReitti.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.reitit = action.payload 
+        state.reittiOlio = action.payload 
       })
       .addCase(haeReitti.rejected, (state, action) => {
         state.isLoading = false
@@ -148,5 +156,5 @@ export const reittiSlice = createSlice({
   }
 })
 
-export const {reset, setNaytettavat, setReittiId} = reittiSlice.actions
+export const {reset, setNaytettavat, setReittiOlio} = reittiSlice.actions
 export default reittiSlice.reducer
