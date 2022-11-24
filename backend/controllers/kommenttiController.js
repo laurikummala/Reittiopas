@@ -6,9 +6,24 @@ const User = require('../models/userModel')
 // @route   GET /api/kommentit
 // @access  Private
 const haeKommentit = asyncHandler(async (req, res) => {
-  const kommentit = await Kommentti.find({ user: req.user.id })
+  const kommentit = await Kommentti.find()
+  // const kommentit = await Kommentti.find({ user: req.user.id }) // jos tarvii hakea tietyn käyttäjän kommentit
 
   res.status(200).json(kommentit)
+})
+
+// @desc    Hae kommentti
+// @route   GET /api/kommentit
+// @access  Private
+const haeKommentti= asyncHandler(async (req, res) => {
+  const kommentti = await Kommentti.findById(req.params.id)
+
+  if (!kommentti) {
+    res.status(400)
+    throw new Error('Kommenttia ei löytynyt')
+  }
+
+  res.status(200).json(kommentti)
 })
 
 // @desc    Luo kommentti
@@ -16,11 +31,11 @@ const haeKommentit = asyncHandler(async (req, res) => {
 // @access  Private
 const luoKommentti = asyncHandler(async (req, res) => {
   //console.log(req.body)
-  if(!req.body){
+  if(!req.body.teksti) {
     console.log('ei ole tekstiä')
     // res.status(400).json({message: 'Please add a text field'})
     res.status(400)
-      throw new Error('Please add a text field')
+      throw new Error('Anna kommentti')
   }
 
   const kommentti = await Kommentti.create({
@@ -32,57 +47,57 @@ const luoKommentti = asyncHandler(async (req, res) => {
 })
 
 // @desc    Päivitä kommentit
-// @route   PUT /api/kommentit
+// @route   PUT /api/kommentit/:id
 // @access  Private
 const paivitaKommentti = asyncHandler(async (req, res) => {
   const kommentti = await Kommentti.findById(req.params.id)
 
   if(!kommentti) {
     res.status(400)
-    throw new Error('Comment not found')
+    throw new Error('Kommenttia ei löytynyt')
   }
 
   // check for user
   if(!req.user) {
     res.status(401)
-    throw new Error('User not found')
+    throw new Error('Käyttäjää ei löytynyt')
   }
 
   // make sure the logged in user matches the goal user
   if(kommentti.user.toString() !== req.user.id){
     res.status(401)
-    throw new Error('User not authorized')   
+    throw new Error('Käyttäjällä ei ole valtuuksia')   
   }
 
-  const paivitaKommentti = await Kommentti.findByIdAndUpdate(req.params.id, req.
+  const paivitettyKommentti = await Kommentti.findByIdAndUpdate(req.params.id, req.
     body, {
     new: true,
   })
 
-  res.status(200).json(paivitaKommentti)
+  res.status(200).json(paivitettyKommentti)
 })
 
 // @desc    Poista kommentti
-// @route   DELETE /api/kommentit
+// @route   DELETE /api/kommentit/:id
 // @access  Private
 const poistaKommentti = asyncHandler(async (req, res) => {
   const kommentti = await Kommentti.findById(req.params.id)
 
   if(!kommentti) {
     res.status(400)
-    throw new Error('Comment not found')
+    throw new Error('Kommenttia ei löytynyt')
   }
 
   // check for user
   if(!req.user) {
     res.status(401)
-    throw new Error('User not found')
+    throw new Error('Käyttäjää ei löytynyt')
   }
 
   // make sure the logged in user matches the kommentti user
   if(kommentti.user.toString() !== req.user.id){
     res.status(401)
-    throw new Error('User not authorized')   
+    throw new Error('Käyttäjällä ei ole valtuuksia')   
   }
 
   await kommentti.remove()
@@ -92,6 +107,7 @@ const poistaKommentti = asyncHandler(async (req, res) => {
 
 module.exports = {
   haeKommentit,
+  haeKommentti,
   luoKommentti,
   paivitaKommentti,
   poistaKommentti

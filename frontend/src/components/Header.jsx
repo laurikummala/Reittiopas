@@ -1,47 +1,67 @@
+
 import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { logout, reset } from '../features/auth/authSlice'
+import { logout } from '../features/auth/authSlice'
+import { setNaytettavat } from '../features/reitit/reittiSlice'
+
 
 function Header() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
+  const { naytettavat } = useSelector((state) => state.reitit)
 
-  const onChange = () => {
-    // tässä muutetaan jokin muuttuja/tila näyttämään erilaiset reitit
-    // dispatch(logout())
-    // dispatch(reset())
-    // navigate('/')
+
+  const onChange = (e) => {
+    // tähän täytyy laittaa jokin setStatea vastaava, mikä se sitten onkaan????
+    // ei saa suoraan sijoittaa constiin... nythän tää toimii
+    dispatch(setNaytettavat(e.target.value))
+    console.log('näytettävät: ' + naytettavat)
   }
+
 
   const onLogout = () => {
     dispatch(logout())
-    dispatch(reset())
+    // meidän ei oikeastaan tarvi state.reitit tiloja nollata koskaan??
+    //dispatch(reset())
     navigate('/')
   }
+
+
+  const padding = {
+    padding: 8
+  }
+
 
   return (
     <header className='header'>
       <div className='logo'>
-        <Link to='/'>Reitit</Link>
+        <div>
+          <Link style={padding} to="/" >Reitit</Link>
+          {user
+            ? <Link style={padding} to="/lisaareitti">Lisää reitti</Link>
+            : <></>
+          }
+        </div>
       </div>
       <form onChange={onChange}>
-        <label htmlFor="cars">Valitse näytettävät reitit:</label>
-        <select id="näytettävät" name="näytettävät">
+        <label htmlFor="naytettavat">Valitse näytettävät reitit: </label>
+        <select id="naytettavat" name="naytettavat">
           <option value="kaikki">Kaikki reitit</option>
           <option value="melonta">Melontareitit</option>
-          <option value="pyöräily">Pyöräilyreitit</option>
+          <option value="pyoraily">Pyöräilyreitit</option>
           <option value="vaellus">Vaellusreitit</option>
         </select>
       </form>
       <ul>
         {user ? (
-            <li>
-              <button className='btn' onClick={onLogout}>
-                <FaSignOutAlt /> Kirjaudu ulos
-              </button>
-            </li>) : (
+          <li>
+            <p>Tervetuloa sivuillemme {user && user.name}</p>
+            <button className='btn' onClick={onLogout}>
+              <FaSignOutAlt /> Kirjaudu ulos
+            </button>
+          </li>) : (
           <>
             <li>
               <Link to='/login'>
@@ -55,6 +75,7 @@ function Header() {
             </li>
           </>
         )}
+
       </ul>
     </header>
   )

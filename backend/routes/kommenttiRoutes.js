@@ -12,5 +12,4 @@ const {protect} = require('../middleware/authMiddleware')
 router.route('/').get(protect, haeKommentit).post(protect, luoKommentti)
 router.route('/:id').put(protect, paivitaKommentti).delete(protect, poistaKommentti)
 
-
 module.exports = router

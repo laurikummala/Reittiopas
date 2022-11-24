@@ -2,58 +2,58 @@ import { FaUserAlt } from "react-icons/fa";
 import CommentForm from "./CommentForm";
 
 const Comment = ({
-    comment,
+    kommentti,
     replies,
     currentUserId,
-    deleteComment,
-    updateComment,
+    poistaKommentti,
+    paivitaKommentti,
     activeComment,
-    addComment,
+    lisaaKommentti,
     setActiveComment,
     parentId = null,
 }) => {
 
     // Kommenttia voi muokata viiden minuutin ajan kommentin luomisen jälkeen
-    const fiveMinutes = 300000;
-    const timePassed = new Date() - new Date(comment.createdAt) > fiveMinutes;
+    const fiveMinutes = 3000;
+    const timePassed = new Date() - new Date(kommentti.createdAt) > fiveMinutes;
     // Jos currentUserId on true, kommenttiin voi vastata
     const canReply = Boolean(currentUserId);
     // Jos currentUserId ja commentin userId ovat samoja, kommenttia voi muokata viiden minuutin sisällä
-    const canEdit = currentUserId === comment.userId && !timePassed;
+    const canEdit = currentUserId === kommentti.userId && !timePassed;
     // Jos currentUserId ja commentin userId ovat samoja, kommentin voi poistaa viiden minuutin sisällä
-    const canDelete = currentUserId === comment.userId && replies.length === 0 && !timePassed;
+    const canDelete = currentUserId === kommentti.userId && replies.length === 0 && !timePassed;
     // Muutetaan kommentin luontiaika selkeämpään muotoon
-    const createdAt = new Date(comment.createdAt).toLocaleString();
+    const createdAt = new Date(kommentti.createdAt).toLocaleString();
 
     const isReplying =
         activeComment &&
-        activeComment.id === comment.id &&
+        activeComment._id === kommentti._id &&
         activeComment.type === "replying";
 
     const isEditing =
         activeComment &&
-        activeComment.id === comment.id &&
+        activeComment._id === kommentti._id &&
         activeComment.type === "editing";
 
-    const replyId = parentId ? parentId : comment.id;
+    const replyId = parentId ? parentId : kommentti._id;
 
     return (
-        <div key={comment.id} className="comment">
+        <div key={kommentti._id} className="comment">
             <div className="comment-image-container">
                 <FaUserAlt />
             </div>
             <div className="comment-right-part">
                 <div className="comment-content">
-                    <div className="comment-author">{comment.username}</div>
+                    <div className="comment-author">{kommentti.user}</div>
                     <div>{createdAt}</div>
                 </div>
-                {!isEditing && <div className="comment-text">{comment.teksti}</div>}
+                {!isEditing && <div className="comment-text">{kommentti.teksti}</div>}
                 {isEditing && (
                     <CommentForm
                         submitLabel="Päivitä kommentti"
                         hasCancelButton
-                        initialText={comment.teksti}
-                        handleSubmit={(text) => updateComment(text, comment.id)}
+                        initialText={kommentti.teksti}
+                        handleSubmit={(text) => paivitaKommentti(text, kommentti._id)}
                         handleCancel={() => {
                             setActiveComment(null);
                         }}
@@ -64,14 +64,14 @@ const Comment = ({
                     {canReply && (
                         <div
                             className="comment-action"
-                            onClick={() => setActiveComment({ id: comment.id, type: "replying" })}>Vastaa
+                            onClick={() => setActiveComment({ _id: kommentti._id, type: "replying" })}>Vastaa
                         </div>
                     )}
 
                     {canEdit && (
                         <div
                             className="comment-action"
-                            onClick={() => setActiveComment({ id: comment.id, type: "editing" })}>Muokkaa
+                            onClick={() => setActiveComment({ _id: kommentti._id, type: "editing" })}>Muokkaa
                         </div>
                     )}
 
@@ -79,28 +79,28 @@ const Comment = ({
                         <div
                             className="comment-action"
                             onClick={() =>
-                                deleteComment(comment.id)}>Poista
+                                poistaKommentti(kommentti._id)}>Poista
                         </div>
                     )}
                 </div>
                 {isReplying && (
                     <CommentForm
                         submitLabel="Vastaa"
-                        handleSubmit={(text) => addComment(text, replyId)}
+                        handleSubmit={(text) => lisaaKommentti(text, replyId)}
                     />
                 )}
                 {replies.length > 0 && (
                     <div className="replies">
                         {replies.map((reply) => (
                             <Comment
-                                comment={reply}
-                                key={reply.id}
+                                kommentti={reply}
+                                key={reply._id}
                                 setActiveComment={setActiveComment}
                                 activeComment={activeComment}
-                                updateComment={updateComment}
-                                deleteComment={deleteComment}
-                                addComment={addComment}
-                                parentId={comment.id}
+                                paivitaKommentti={paivitaKommentti}
+                                poistaKommentti={poistaKommentti}
+                                lisaaKommentti={lisaaKommentti}
+                                parentId={kommentti._id}
                                 replies={[]}
                                 // Jokaisessa vastauksessa oltava samat tiedot kuin alkuperäisessä kommentissa
                                 currentUserId={currentUserId}

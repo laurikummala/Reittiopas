@@ -23,6 +23,7 @@ const CommentForm = ({
             <textarea
                 className="comment-form-textarea"
                 value={text}
+                placeholder='Kirjoita kommentti...'
                 onChange={(e) => setText(e.target.value)}
             />
             <button
@@ -32,10 +33,10 @@ const CommentForm = ({
             </button>
             {hasCancelButton && (
                 <button
-                    type="submit" // alkuperäisessä "button"
+                    type="button" 
                     className="comment-form-button comment-form-cancel-button"
                     onClick={handleCancel}>
-                    Cancel
+                    Peruuta
                 </button>
             )}
         </form>

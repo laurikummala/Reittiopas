@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import {
-    getComments as getCommentsApi,
-    createComment as createCommentApi,
-    deleteComment as deleteCommentApi,
-    updateComment as updateCommentApi
-} from "../api";
+    haeKommentit as getCommentsApi,
+    luoKommentti as createCommentApi,
+    poistaKommentti as deleteCommentApi,
+    paivitaKommentti as updateCommentApi
+} from "../features/kommentit/kommenttiService";
 import Comment from "./Comment";
 import CommentForm from "./CommentForm";
-
 
 const Comments = ({ currentUserId }) => {
     const [backendComments, setBackendComments] = useState([])
@@ -29,21 +28,21 @@ const Comments = ({ currentUserId }) => {
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
             );
 
-    const addComment = (text, parentId) => {
-        console.log("addComment", text, parentId);
+    const lisaaKommentti = (text, parentId) => {
+        console.log("lisaaKommentti", text, parentId);
         // Api request
-        createCommentApi(text, parentId).then((comment) => {
+        createCommentApi(text, parentId).then((kommentti) => {
             // muokataan uusi kommentti kommenttien alkuun
-            setBackendComments([comment, ...backendComments]);
+            setBackendComments([kommentti, ...backendComments]);
             setActiveComment(null);
         });
     };
 
     // Funktio kommentin päivitystä varten
-    const updateComment = (text, commentId) => {
+    const paivitaKommentti = (text, commentId) => {
         updateCommentApi(text, commentId).then(() => {
             const updateBackendComments = backendComments.map((backendComment) => {
-                if (backendComment.id === commentId) {
+                if (backendComment._id === commentId) {
                     return { ...backendComment, teksti: text };
                 }
                 return backendComment;
@@ -54,12 +53,12 @@ const Comments = ({ currentUserId }) => {
     };
 
     // funktio kommentin poistamiseksi
-    const deleteComment = (commentId) => {
+    const poistaKommentti = (commentId) => {
         // Kysytään, halutaanko kommentti poistaa
         if (window.confirm("Haluatko varmasti poistaa kommentin?")) {
             deleteCommentApi().then(() => {
                 const updateBackendComments = backendComments.filter(
-                    (backendComment) => backendComment.id !== commentId
+                    (backendComment) => backendComment._id !== commentId
                 );
                 setBackendComments(updateBackendComments);
             });
@@ -75,25 +74,31 @@ const Comments = ({ currentUserId }) => {
     }, []);
     return (
         <div className="comments">
-            <h3 className="comments-title">Reitin kommentit</h3>
+            <h3 className="comments-title"> Reitin kommentit</h3>
+            {backendComments.length > 0 ? (
             <div className="comments-container">
                 {rootComments.map((rootComment) => (
                     <Comment
-                        key={rootComment.id}
-                        comment={rootComment}
-                        replies={getReplies(rootComment.id)}
+                        key={rootComment._id}
+                        kommentti={rootComment}
+                        replies={getReplies(rootComment._id)}
                         currentUserId={currentUserId} // tarkistaa, onko käyttäjällä oikeuksia
-                        deleteComment={deleteComment}
-                        updateComment={updateComment}
+                        poistaKommentti={poistaKommentti}
+                        paivitaKommentti={paivitaKommentti}
                         activeComment={activeComment}
                         setActiveComment={setActiveComment}
-                        addComment={addComment}
+                        lisaaKommentti={lisaaKommentti}
                     />
                 ))}
 
             </div>
-            <div className="comment-form-title">Kirjoita kommentti</div>
-            <CommentForm submitLabel="Lähetä kommentti" handleSubmit={addComment} />
+             ) : (
+                <h3>Reitillä ei ole vielä kommentteja.</h3>
+              )}
+            {/* <div className="comment-form-title">Kirjoita kommentti</div> */}
+           
+            <CommentForm submitLabel="Lähetä kommentti" handleSubmit={lisaaKommentti} />
+            
         </div>
     );
 };

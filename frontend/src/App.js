@@ -5,8 +5,9 @@ import Header from './components/Header';
 import Reitit from './pages/Reitit';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import ReittiSivu from './pages/ReittiSivu';
+import ReittiComponent from './components/ReittiComponent';
 import LisaaReitti from './pages/LisaaReitti';
+import MuokkaaReittia from './pages/MuokkaaReittia'
 
 function App() {
   return (
@@ -16,11 +17,12 @@ function App() {
         <div className='container'>
           <Header />
           <Routes>
-            <Route path='/lisaareitti' element={<LisaaReitti />} />
-            <Route path='/reittisivu' element={<ReittiSivu />} />
             <Route path='/' element={<Reitit />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/reitit/:id' element={<ReittiComponent />} />
+            <Route path='/lisaareitti' element={<LisaaReitti />} />
+            <Route path='/muokkaareittia/:id' element={<MuokkaaReittia />} />
           </Routes>
         </div>
       </Router>
