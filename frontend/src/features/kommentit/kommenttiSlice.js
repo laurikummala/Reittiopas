@@ -41,6 +41,24 @@ export const haeKommentit = createAsyncThunk('kommentit/haeKaikki', async (_, th
   }
 })
 
+// Päivitä kommentti
+
+export const paivitaKommentti = createAsyncThunk('kommentit/paivita', async (commentId, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await kommenttiService.paivitaKommentti(commentId, token)
+  } catch (error) {
+    const message = 
+      (error.response && 
+        error.response.data && 
+        error.response.data.message) || 
+      error.message || 
+      error.toString()
+    return thunkAPI.rejectWithValue(message)   
+  }
+})
+
+
 // Poista käyttäjän kommentti
 export const poistaKommentti = createAsyncThunk('kommentit/poista', async (id, thunkAPI) => {
   try {
@@ -91,13 +109,26 @@ export const kommenttiSlice = createSlice({
         state.isError = true
         state.message = action.payload
       })
+      .addCase(paivitaKommentti.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(paivitaKommentti.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.kommentit.update(action.payload) 
+      })
+      .addCase(paivitaKommentti.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
       .addCase(poistaKommentti.pending, (state) => {
         state.isLoading = true
       })
       .addCase(poistaKommentti.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.kommentit = state.reitit.filter((kommentti) => kommentti._id !== action.payload.id) 
+        state.kommentit = state.kommentit.filter((kommentti) => kommentti._id !== action.payload.id) 
       })
       .addCase(poistaKommentti.rejected, (state, action) => {
         state.isLoading = false

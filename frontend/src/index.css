@@ -26,6 +26,7 @@ ul {
 
 li {
   line-height: 2.2;
+  text-align: left;
 }
 
 h1 {
@@ -243,6 +244,7 @@ code {
 
 .comment-form-title {
   font-size: 22px;
+  text-align: left;
 }
 
 .comment-form-textarea {

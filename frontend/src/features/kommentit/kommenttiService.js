@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const API_URL = '/api/kommentit/'
+const API_URL = '/api/reitit/'
 
 // Luo uusi kommentti
-const luoKommentti = async (kommenttiData, token) => {
+export const luoKommentti = async (kommenttiData, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
@@ -16,7 +16,7 @@ const luoKommentti = async (kommenttiData, token) => {
 }
 
 // Hae käyttäjän kommentit
-const haeKommentit = async (token) => {
+export const haeKommentit = async (token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
@@ -28,23 +28,37 @@ const haeKommentit = async (token) => {
   return response.data
 }
 
-// Poista käyttäjän kommentti
-const poistaKommentti = async (kommenttiId, token) => {
+// Päivitä kommentti
+
+export const paivitaKommentti = async (commentId, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }
 
-  const response = await axios.delete(API_URL + kommenttiId, config)
+  const response = await axios.update(API_URL, commentId, config)
 
   return response.data
 }
 
+// Poista käyttäjän kommentti
+export const poistaKommentti = async (commentId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.delete(API_URL + commentId, config)
+
+  return response.data
+}
 
 const kommenttiService = {
   luoKommentti,
   haeKommentit,
+  paivitaKommentti,
   poistaKommentti,
 }
 

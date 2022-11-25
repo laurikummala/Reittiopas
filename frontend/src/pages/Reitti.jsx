@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 import { haeReitit, haeReitti, poistaReitti, reset, setReittiOLio } from '../features/reitit/reittiSlice'
-
+import Comments from '../comments/Comments'
 // function Reitti({reitit}) {
 function Reitti() {
 
@@ -87,13 +87,16 @@ function Reitti() {
           : <></>
         }
       </section>
+      <div>
+        <Comments  /> 
+      </div>
     </>
   )
 }
 
 export default Reitti
 
-
+//currentUserId={user._id}
 
 
 
