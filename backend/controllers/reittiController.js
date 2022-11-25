@@ -13,6 +13,15 @@ const haeReitit = asyncHandler(async (req, res) => {
   res.status(200).json(reitit)
 })
 
+// @desc    Hae kaikki reitit
+// @route   GET /api/reitit
+// @access  Public
+const haeKaikkiReitit = asyncHandler(async (req, res) => {
+  const reitit = await Reitti.find()  // hakee kaikki reitit !!!
+  // const reitit = await Reitti.find({ user: req.user.id })  // jos tarvii hakea tietyn käyttäjän reitit
+  
+  res.status(200).json(reitit)
+})
 
 // @desc    Hae reitti
 // @route   GET /api/reitit
@@ -126,6 +135,7 @@ const poistaReitti = asyncHandler(async (req, res) => {
 
 module.exports = {
   haeReitit,
+  haeKaikkiReitit,
   haeReitti,
   luoReitti,
   paivitaReitti,

@@ -30,6 +30,15 @@ const haeReitit = async (token) => {
   return response.data
 }
 
+// Hae kaikki käyttäjän reitit
+const haeKaikkiReitit = async () => {
+  
+
+  const response = await axios.get(API_URL)
+
+  return response.data
+}
+
 
 // Hae käyttäjän tietty reitti id-numerolla
 const haeReitti = async (reittiId, token) => {
@@ -62,6 +71,7 @@ const poistaReitti = async (reittiId, token) => {
 const reittiService = {
   luoReitti,
   haeReitit,
+  haeKaikkiReitit,
   haeReitti,
   poistaReitti,
 }

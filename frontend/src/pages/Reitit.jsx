@@ -1,74 +1,107 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-
-import ReittiRivi from '../components/ReittiRivi'
 import Spinner from '../components/Spinner'
-import { haeReitit, poistaReitti, setReittiId, reset } from '../features/reitit/reittiSlice'
+import { haeReitit, haeKaikkiReitit, poistaReitti, setReittiId, reset } from '../features/reitit/reittiSlice'
+//import { haeKaikkiReitit } from '../../../backend/controllers/reittiController'
 
 
 function Reitit() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  
+  
 
   const {user} = useSelector((state) => state.auth)
-  const { reitit, naytettavat, isLoading, isError, message} = useSelector((state) => state.reitit)
+  const { reitit, naytettavat, isLoading, isError, isSuccess, message} = useSelector((state) => state.reitit)
 
-  console.log('Reitit: '+ reitit.length)
-  console.log('näytettävät2: '+ naytettavat)
+  //console.log('Reitit: '+ reitit.length)
+  //console.log('näytettävät2: '+ naytettavat)
+
+  const [naytettavatReitit, setNaytettavatReitit] = useState(reitit)
 
   useEffect(() => {
+
+    dispatch(haeKaikkiReitit())
+
+    // tässä katotaan onko reittejä ja onko saatu ladattua tietokannasta, tulostetaan naytettavan mukaan
+    if(reitit.length > 0 && isSuccess){
+      //alert('onnistui')
+      // console.log(naytettavat)
+      // console.log('NR: ' + naytettavatReitit.length + ' ja R: ' + reitit.length)
+      if(naytettavat === 'kaikki'){
+        setNaytettavatReitit(reitit)
+      }
+      if(naytettavat === 'melonta'){
+        let filtered = reitit.filter(reittiItem => reittiItem.reittityypit[0].melonta === true)
+        setNaytettavatReitit(filtered)
+      }
+      if(naytettavat === 'pyoraily'){
+        let filtered = reitit.filter(reittiItem => reittiItem.reittityypit[0].pyoraily === true)
+        setNaytettavatReitit(filtered)
+      }
+      if(naytettavat === 'vaellus'){
+        let filtered = reitit.filter(reittiItem => reittiItem.reittityypit[0].vaellus === true)
+        setNaytettavatReitit(filtered)
+      }
+      //console.log('RRR: ' + naytettavatReitit.length)
+    }
+
+
     if(isError) {
       console.log(message);
     }
 
-    if(!user) {
-      navigate('/login')
-    }
+    //if(!user) {       // useLocation jos ei User jos ei Location. Kun ei kautta viivaa. react router
+      //navigate('/')
+      
+    //}
 
-    dispatch(haeReitit())
+    //dispatch(haeKaikkiReitit())
 
     return () => {
-      dispatch(reset())
+      //dispatch(reset())
     }
 
-  }, [user, navigate])
+  }, [naytettavat, isSuccess])
 
   if(isLoading) {
     return <Spinner />
   }
 
 
-  const poistaReittiButton = ({reitti}) => {
+  const poistaReittiButton = ({reittiItem}) => {
     // console.log(reitti.user)
     // console.log(user)
-    if(reitti.user.toString() === user._id){
+    if(user){
+    if(reittiItem.user.toString() === user._id){
       return (
-        <button onClick={() => dispatch(poistaReitti(reitti._id))} className="close">
+        <button onClick={() => dispatch(poistaReitti(reittiItem._id))} className="close">
           Poista reitti
         </button>
       )
     }
   }
-
-  function reittifilter(reitti) {
-    //console.log("reittifilterkutsuttu")   
-    if (naytettavat === 'kaikki') {
-      return reitti;
-    }
-    if (reitti.reittityypit.length > 0) {
-      if (reitti.reittityypit[0].melonta === true && naytettavat === 'melonta') {
-        return reitti;
-      }
-      if (reitti.reittityypit[0].vaellus === true && naytettavat === 'vaellus') {
-        return reitti;
-      }
-      if (reitti.reittityypit[0].pyoraily === true && naytettavat === 'pyoraily') {
-        return reitti;
-      }
-    }
-
   }
+
+  // function reittifilter(reitti) {
+  //   //console.log("reittifilterkutsuttu")   
+  //   if (naytettavat === 'kaikki') {
+  //     return reitti;
+  //   }
+  //   if (reitti.reittityypit.length > 0) {
+  //     if (reitti.reittityypit[0].melonta === true && naytettavat === 'melonta') {
+  //       return reitti;
+  //     }
+  //     if (reitti.reittityypit[0].vaellus === true && naytettavat === 'vaellus') {
+  //       return reitti;
+  //     }
+  //     if (reitti.reittityypit[0].pyoraily === true && naytettavat === 'pyoraily') {
+  //       return reitti;
+  //     }
+  //   }
+
+  // }
 
   return (
     <>
@@ -88,7 +121,7 @@ function Reitit() {
           }
         </div>
       </section>
-      <div>
+      {/* <div>
         {reitit.length > 0 ? (
           <ul>
             {reitit
@@ -98,13 +131,29 @@ function Reitit() {
                 <Link to={`/reitit/${reitti._id}`} >{reitti.nimi}, _id:{reitti._id}, {reitti.pituus} km, ***</Link>
                 {poistaReittiButton({reitti})}
                 {/* {setReittiId(reitti._id)} */}
+              {/*</li>
+            )}
+          </ul>
+        ) : (
+          <h3>Ei ole reittejä!</h3>
+        )}
+      </div> 
+    */}
+    <div>
+    {naytettavatReitit.length > 0 ? (
+          <ul>
+            {naytettavatReitit
+            .map(reittiItem =>
+              <li key={reittiItem._id}>
+                <Link to={`/reitit/${reittiItem._id}`} >{reittiItem.nimi}, _id:{reittiItem._id}, {reittiItem.pituus} km, ***</Link>
+                {poistaReittiButton({reittiItem})}
               </li>
             )}
           </ul>
         ) : (
           <h3>Ei ole reittejä!</h3>
         )}
-      </div>
+    </div>
     </>
   )
 }

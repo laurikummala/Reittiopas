@@ -38,10 +38,10 @@ export const luoReitti = createAsyncThunk('reitit/luo', async (reittiData, thunk
 
 
 // Hae kaikki reitit
-export const haeReitit = createAsyncThunk('reitit/haeKaikki', async (_, thunkAPI) =>  {
+export const haeReitit = createAsyncThunk('reitit/haeReitit', async (_, thunkAPI) =>  {
   try {
     const token = thunkAPI.getState().auth.user.token
-    return await reittiService.haeReitit(token)
+    return await reittiService.haeReitit()
   } catch (error) {
     const message = 
       (error.response && 
@@ -53,6 +53,20 @@ export const haeReitit = createAsyncThunk('reitit/haeKaikki', async (_, thunkAPI
   }
 })
 
+export const haeKaikkiReitit = createAsyncThunk('reitit/haeKaikkiReitit', async (_, thunkAPI) =>  {
+  try {
+    
+    return await reittiService.haeKaikkiReitit()
+  } catch (error) {
+    const message = 
+      (error.response && 
+        error.response.data && 
+        error.response.data.message) || 
+      error.message || 
+      error.toString()
+    return thunkAPI.rejectWithValue(message)  
+  }
+})
 
 export const haeReitti = createAsyncThunk('reitit/haeReitti', async (id, thunkAPI) =>  {
   try {
@@ -123,6 +137,19 @@ export const reittiSlice = createSlice({
         state.reitit = action.payload 
       })
       .addCase(haeReitit.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(haeKaikkiReitit.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(haeKaikkiReitit.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.reitit = action.payload 
+      })
+      .addCase(haeKaikkiReitit.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
